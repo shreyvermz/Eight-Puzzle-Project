@@ -1,5 +1,6 @@
+from copy import deepcopy
+import heapq
 # first we declare the base cases provided in the project layout to get a quick test or input
-
 depth0puzzle = [[1, 2, 3],
                 [4, 5, 6],
                 [7, 8, 0]]
@@ -133,6 +134,7 @@ def displayPuzzles():
 def puzzlePrinter(puzzlePassed):
 
     for i in range(0,3):
+
         print(puzzlePassed[i])
 
  #########################################   
@@ -159,12 +161,87 @@ def heuristicOperator(puzzleFromPrinter):
     
 ##########################################
 def uniformCostSearch(puzzleFromOperator):
-    print('in uniform cost search')
+    
+    goalState = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+
+    start = [(0, puzzleFromOperator)]  # no cost because we just started, start at unsolved puzzle
+
+    visited = set() # get ready to note where we have already explored 
+
+    nodesExpanded = 0 # get ready to track how many 
+
+    maxQueueSize = 1 # default
+
+    while start:
+        # https://docs.python.org/3/library/heapq.html
+        g, currentState = heapq.heappop(start)  # get the lowest-cost node
+
+        nodesExpanded += 1
+
+        # Print the state
+        puzzlePrinter(currentState)
+
+        print(f"g(n): {g}, h(n): 0") # adding f to deal with weird printing behavior
+
+        if currentState == goalState: # we are in the goal state here
+
+            print(f"Solution found at depth {g}")
+            print(f"Nodes expanded: {nodesExpanded}")
+            print(f"Max queue size: {maxQueueSize}")
+
+            return
+        # https://www.geeksforgeeks.org/python-map-function/
+        # https://docs.python.org/3/tutorial/datastructures.html
+        # https://www.w3schools.com/python/python_tuples.asp
+        # hardest part of implementing this function
+        visited.add(tuple(map(tuple, currentState)))
+
+        for neighbor in getNeighbors(currentState):  # send to helper function
+
+            if tuple(map(tuple, neighbor)) not in visited: # consult our visited tracker to make sure we havent been here
+                # https://docs.python.org/3/library/heapq.html
+                heapq.heappush(start, (g + 1, neighbor))
+                # tracks the max queue size
+                maxQueueSize = max(maxQueueSize, len(start))
+
 #########################################
 def misplacedTile(puzzleFromOperator):
-    print('in misplaced tile')
+    print(f'in misplaced tile')
 ##########################################
 def manhattanDistance(puzzleFromOperator):
-    print('in manhattan distance')
+    print(f'in manhattan distance')
 ###########################################
+# gives us a list of valid states to go from the current ones
+def getNeighbors(state):
+    
+    neighbors = [] # will hold states we can go to
+    x, y = None, None
+
+    
+    for i in range(3): # loop through table to find empty tile
+        
+        for j in range(3):
+
+            if state[i][j] == 0:
+
+                x, y = i, j
+                break
+    
+    # up, down, left, right
+    moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    
+    for dx, dy in moves: 
+        
+        newX, newY = x + dx, y + dy # new coordinates of 0
+        
+        if 0 <= newX < 3 and 0 <= newY < 3: # make sure we are in tbale
+            
+            newState = deepcopy(state) # make a copy 
+
+            newState[x][y], newState[newX][newY] = newState[newX][newY], newState[x][y] # move 0 to new state
+
+            neighbors.append(newState) # updates our altered state
+    
+    return neighbors
+######################################
 main()
