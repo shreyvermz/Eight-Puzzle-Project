@@ -31,7 +31,7 @@ depth20puzzle = [[7, 1, 2],
 depth24puzzle = [[0, 7, 2],
                  [4, 6, 1],
                  [3, 5, 8]]
-
+#########################################
 def main():
 
     puzzleStarter = 0
@@ -50,13 +50,35 @@ def main():
 
         if (puzzleStarter == 2):
             print('You chose option 2.')
-            # add call to custom puzzle builder
+            # used chunk of code from example in order to ensure getting a table
+            print("Enter your puzzle, using a zero to represent the blank. " +
+                    "Please only enter valid 8 puzzles. Enter the puzzle demilimiting " +
+                    "the numbers with a space. RET only when finished." + '\n')
+            
+            puzzle_row_one = input("Enter the first row: ")
+            puzzle_row_two = input("Enter the second row: ")
+            puzzle_row_three = input("Enter the third row: ") 
+
+            puzzle_row_one = puzzle_row_one.split()
+            puzzle_row_two = puzzle_row_two.split()
+            puzzle_row_three = puzzle_row_three.split()
+
+            for i in range(0, 3):
+                puzzle_row_one[i] = int(puzzle_row_one[i])
+                puzzle_row_two[i] = int(puzzle_row_two[i])
+                puzzle_row_three[i] = int(puzzle_row_three[i])
+
+            customPuzzle = [puzzle_row_one, puzzle_row_two, puzzle_row_three]
+
+            puzzlePrinter(customPuzzle)
+
+            heuristicOperator(customPuzzle)
 
         else:
             print('Not a valid input. Try again.')
 
     print(str(puzzleStarter))
-
+#######################################
 def displayPuzzles():
 
     print('What depth puzzle would you like solved?')
@@ -68,15 +90,81 @@ def displayPuzzles():
 
     if (chooseDepth == 0):
 
-        for i in range(0, 3):
-            print(depth0puzzle[i])
+        puzzlePrinter(depth0puzzle)
+        heuristicOperator(depth0puzzle)
 
     elif (chooseDepth == 2):
 
-        for i in range(0, 3):
-            print(depth2puzzle[i])
+        puzzlePrinter(depth2puzzle)
+        heuristicOperator(depth2puzzle)
 
-    
-    
+    elif (chooseDepth == 4):
 
+        puzzlePrinter(depth4puzzle)
+        heuristicOperator(depth4puzzle)
+
+    elif (chooseDepth == 8):
+
+        puzzlePrinter(depth8puzzle)
+        heuristicOperator(depth8puzzle)
+
+    elif (chooseDepth == 12):
+
+        puzzlePrinter(depth12puzzle)
+        heuristicOperator(depth12puzzle)
+
+    elif (chooseDepth == 16):
+
+        puzzlePrinter(depth16puzzle)
+        heuristicOperator(depth16puzzle)
+
+    elif (chooseDepth == 20):
+
+        puzzlePrinter(depth20puzzle)
+        heuristicOperator(depth20puzzle)
+
+
+    elif (chooseDepth == 24):
+
+        puzzlePrinter(depth24puzzle)
+        heuristicOperator(depth24puzzle)
+
+##########################################
+def puzzlePrinter(puzzlePassed):
+
+    for i in range(0,3):
+        print(puzzlePassed[i])
+
+ #########################################   
+def heuristicOperator(puzzleFromPrinter):
+
+        print('How would you like to solve this puzzle?')
+
+        sendToHeuristic = input("Enter '1' for Uniform Search, '2' for Misplaced Tile, '3'"
+                                "for Manhattan Distance: ")
+        
+        sendToHeuristic = int(sendToHeuristic)
+
+        if (sendToHeuristic == 1):
+            
+            uniformCostSearch(puzzleFromPrinter)
+
+        elif (sendToHeuristic == 2):
+
+            misplacedTile(puzzleFromPrinter)
+
+        elif (sendToHeuristic == 3):
+
+            manhattanDistance(puzzleFromPrinter)
+    
+##########################################
+def uniformCostSearch(puzzleFromOperator):
+    print('in uniform cost search')
+#########################################
+def misplacedTile(puzzleFromOperator):
+    print('in misplaced tile')
+##########################################
+def manhattanDistance(puzzleFromOperator):
+    print('in manhattan distance')
+###########################################
 main()
