@@ -206,7 +206,47 @@ def uniformCostSearch(puzzleFromOperator):
 
 #########################################
 def misplacedTile(puzzleFromOperator):
-    print(f'in misplaced tile')
+    
+    goalState = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+
+    start = [(misplacedTileHelper(puzzleFromOperator), 0, puzzleFromOperator)]  # no cost at start
+                                                                                # minheap expanding lowest cost first                                                                        
+    visited = set() # same logic as uniform cost
+
+    nodesExpanded = 0
+
+    maxQueueSize = 1
+
+    while start:
+
+        f, g, currentState = heapq.heappop(start) #pops node with lowest f(n)
+                                                  #tuple
+        nodesExpanded += 1
+
+        puzzlePrinter(currentState)
+
+        print(f"g(n): {g}, h(n): {misplacedTileHelper(currentState)}") #display number of misplaced tiles from our helper
+
+        if currentState == goalState: # if we get to goal 
+
+            print(f"Solution found at depth {g}")
+            print(f"Nodes expanded: {nodesExpanded}")
+            print(f"Max queue size: {maxQueueSize}")
+
+            return
+        # same sources from uniform cost search section
+        visited.add(tuple(map(tuple, currentState))) # keep track of where we visited
+
+        for neighbor in getNeighbors(currentState): # return the list of next states
+
+            if tuple(map(tuple, neighbor)) not in visited: # make neighbor a tuple and check if we saw it already
+
+                h = misplacedTileHelper(neighbor) # get h(n)
+
+                heapq.heappush(start, (g + 1 + h, g + 1, neighbor)) # g(n) + h(n) 
+                                                                    # add to queue
+                maxQueueSize = max(maxQueueSize, len(start)) # get maximum queue size
+
 ##########################################
 def manhattanDistance(puzzleFromOperator):
     print(f'in manhattan distance')
@@ -244,4 +284,19 @@ def getNeighbors(state):
     
     return neighbors
 ######################################
+def misplacedTileHelper(state): # gives us the amount of misplaced tiles compared to goal state
+    
+    goalState = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+
+    for i in range(3):  # loop through rows
+
+        for j in range(3):  # loop through columns
+
+            if state[i][j] != 0 and state[i][j] != goalState[i][j]:  # dont pay attention to 0 tile
+
+                misplacedNum += 1  #increment when we see misplaced tile
+
+    return misplacedNum
+##########################################
+
 main()
