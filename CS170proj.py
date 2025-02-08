@@ -249,7 +249,45 @@ def misplacedTile(puzzleFromOperator):
 
 ##########################################
 def manhattanDistance(puzzleFromOperator):
-    print(f'in manhattan distance')
+
+    goalState = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+
+    start = [(manhattanDistanceHelper(puzzleFromOperator), 0, puzzleFromOperator)]  # same logic as misplaced tile
+
+    visited = set() # set up where we store the ones we visited
+
+    nodesExpanded = 0
+
+    maxQueueSize = 1
+
+    while start:
+
+        f, g, currentState = heapq.heappop(start) # get the lowest f(n)
+
+        nodesExpanded += 1
+
+        puzzlePrinter(currentState)
+
+        print(f"g(n): {g}, h(n): {manhattanDistanceHelper(currentState)}")
+
+        if currentState == goalState:
+            print(f"Solution found at depth {g}")
+            print(f"Nodes expanded: {nodesExpanded}")
+            print(f"Max queue size: {maxQueueSize}")
+            return
+        
+        visited.add(tuple(map(tuple, currentState))) # current state is stored as tuple again
+                                                     # keeping track of where we visit
+        for neighbor in getNeighbors(currentState): # gives our next moves
+
+            if tuple(map(tuple, neighbor)) not in visited: # if we havent visited this one already
+
+                h = manhattanDistanceHelper(neighbor) # getting our h(n)
+
+                heapq.heappush(start, (g + 1 + h, g + 1, neighbor)) # adding new states
+
+                maxQueueSize = max(maxQueueSize, len(start)) # get the max queue size
+
 ###########################################
 # gives us a list of valid states to go from the current ones
 def getNeighbors(state):
@@ -298,5 +336,28 @@ def misplacedTileHelper(state): # gives us the amount of misplaced tiles compare
 
     return misplacedNum
 ##########################################
+def manhattanDistanceHelper(state):
+    
+    goalPositions = {1:(0,0), 2:(0,1), 3:(0,2), 4:(1,0), 5:(1,1), 6:(1,2), 7:(2,0), 8:(2,1), 0:(2,2)} # keeps track of where we want the numbers 
+                                                                                                        # to be in the goal table
+    totalDistance = 0  # start tracking distance
 
+    for i in range(3): # loop through rows
+
+        for j in range(3):  # loopthrough columns 
+
+            currentTile = state[i][j]  # track current tile
+
+            if currentTile != 0:  
+
+                goalX, goalY = goalPositions[currentTile]  # check goal example
+
+                localDistance = abs(i - goalX) + abs(j - goalY)  # i, j hold current positions of tiles
+                                                                # goals hold the positions we want to get them to
+                                                                # https://www.geeksforgeeks.org/maximum-manhattan-distance-between-a-distinct-pair-from-n-coordinates/
+
+                totalDistance += localDistance  # add the distance we got in this state to the total distance to be returned
+
+    return totalDistance  # give back the looped through distance 
+#########################################
 main()
