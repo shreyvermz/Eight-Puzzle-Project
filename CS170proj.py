@@ -78,7 +78,7 @@ def main():
         else:
             print('Not a valid input. Try again.')
 
-    print(str(puzzleStarter))
+    
 #######################################
 def displayPuzzles():
 
@@ -325,6 +325,8 @@ def getNeighbors(state):
 def misplacedTileHelper(state): # gives us the amount of misplaced tiles compared to goal state
     
     goalState = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+
+    misplacedNum = 0
 
     for i in range(3):  # loop through rows
 
